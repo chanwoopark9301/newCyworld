@@ -4,6 +4,8 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
 @Getter
@@ -11,6 +13,7 @@ import javax.persistence.Id;
 @Entity
 public class Message {
     @Id
-    private long messageId;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long messageId;
     private String message;
 }

@@ -5,8 +5,10 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.validation.Valid;
+import java.net.URI;
 
 @RequestMapping("/v1/messages")
 @RestController
@@ -20,12 +22,13 @@ public class MessageController {
         this.mapper = mapper;
     }
 
-    @PostMapping
-    public ResponseEntity postMessages(
-            @Valid @RequestBody MessagePostDto messagePostDto) {
-        // 사용자의 요청을 받아들입니다.
+    @PostMapping("/post")
+    public ResponseEntity postMessage(@Valid @RequestBody MessagePostDto messagePostDto) {
         Message message = messageService.createMessage(mapper.messageDtoToMessage(messagePostDto));
-
-        return ResponseEntity.ok(mapper.messageToMessageResponseDto(message));
+        URI newResourceLocation = ServletUriComponentsBuilder.fromCurrentRequest()
+                .path("/{messageId}")
+                .buildAndExpand(message.getMessageId())
+                .toUri();
+        return ResponseEntity.created(newResourceLocation).build();
     }
 }
